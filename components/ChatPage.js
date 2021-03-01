@@ -3,31 +3,36 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { FirebaseContext } from '../firebase/firebase-context';
 import List from './List';
 import firebase from 'firebase';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 const ChatPage = () => {
   const [value, onChangeText] = useState('placeholder');
-  const [dbRef, setDbRef] = useState(null);
+  // const [dbRef, setDbRef] = useState(null);
   const [chats, setChats] = useState([]);
   // [{uid: "", sent_at: 123, message: ""}]
   const Firebase = useContext(FirebaseContext);
 
-  useEffect(() => {
-    const dbRef = Firebase.getDbRef();
-    setDbRef(dbRef);
-    dbRef
-      .collection('chats')
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((chat) => {
-          setChats((currentChats) => [chat.data(), ...currentChats]);
-        });
-      });
-  }, []);
+  const dbRef = Firebase.getDbRef().collection('chats');
+  const query = dbRef.orderBy('sent_at');
+  const [messages, loading, error] = useCollectionData(query, {
+    idField: 'uid',
+  });
+
+  // useEffect(() => {
+  //   const dbRef = Firebase.getDbRef();
+  //   setDbRef(dbRef);
+  //   dbRef.collection('chats').onSnapshot((querySnapshot) => {
+  //     querySnapshot.forEach((chat) => {
+  //       console.log(chat.data());
+  //       setChats((currentChats) => [chat.data(), ...currentChats]);
+  //     });
+  //   });
+  // }, []);
 
   const handlePress = () => {
     const chatObj = {
       message: value,
-      sent_at: firebase.database.ServerValue.TIMESTAMP,
+      sent_at: firebase.firestore.FieldValue.serverTimestamp(),
       uid: 'philippa&doug',
     };
     setChats((prevState) => [chatObj, ...prevState]);
@@ -41,7 +46,7 @@ const ChatPage = () => {
   return (
     <View style={styles.container}>
       <Text>Chatarang</Text>
-      <List words={chats} handlePress={handlePress} />
+      <List words={messages} handlePress={handlePress} />
       <TextInput
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         onChangeText={handleTextChange}
