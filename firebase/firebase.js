@@ -1,11 +1,16 @@
 import firebase from 'firebase';
-import config from '../config';
+import 'firebase/firestore';
+import config from '../firebase_config';
 
-const firebaseApp = firebase.initializeApp(config);
+firebase.initializeApp(config);
+// const db = firebase.firestore();
 
 const Firebase = {
   getShoppingRef: () => {
     return firebaseApp.database().ref('shopping');
+  },
+  getDbRef: () => {
+    return firebase.firestore();
   },
 };
 

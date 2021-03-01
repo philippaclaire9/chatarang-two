@@ -2,31 +2,36 @@ import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { FirebaseContext } from '../firebase/firebase-context';
 import List from './List';
+import firebase from 'firebase';
 
 const ChatPage = () => {
   const [value, onChangeText] = useState('placeholder');
-  const [list, setList] = useState([]);
+  const [dbRef, setDbRef] = useState(null);
+  const [chats, setChats] = useState([]);
+  // [{uid: "", sent_at: 123, message: ""}]
   const Firebase = useContext(FirebaseContext);
-  const [shoppingRef, setShoppingRef] = useState();
 
   useEffect(() => {
-    const dbRef = Firebase.getShoppingRef();
-    dbRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      console.log('data: ', data);
-      setList(Object.values(data));
-    });
-    setShoppingRef(dbRef);
-
-    return () => {
-      dbRef.off();
-    };
+    const dbRef = Firebase.getDbRef();
+    setDbRef(dbRef);
+    dbRef
+      .collection('chats')
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((chat) => {
+          setChats((currentChats) => [chat.data(), ...currentChats]);
+        });
+      });
   }, []);
 
   const handlePress = () => {
-    console.log('hello');
-    setList((prevState) => [value, ...prevState]);
-    shoppingRef.push().set(value);
+    const chatObj = {
+      message: value,
+      sent_at: firebase.database.ServerValue.TIMESTAMP,
+      uid: 'philippa&doug',
+    };
+    setChats((prevState) => [chatObj, ...prevState]);
+    dbRef.collection('chats').add(chatObj);
   };
 
   const handleTextChange = (newWord) => {
@@ -36,7 +41,7 @@ const ChatPage = () => {
   return (
     <View style={styles.container}>
       <Text>Chatarang</Text>
-      <List words={list} handlePress={handlePress} />
+      <List words={chats} handlePress={handlePress} />
       <TextInput
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         onChangeText={handleTextChange}
