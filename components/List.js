@@ -5,10 +5,10 @@ export default function List(props) {
   console.log(props);
   return (
     <View>
-      <Button title="Press Me" onPress={props.handlePress} />
       {props.words.map((item, i) => {
         return <Text key={i}>{item}</Text>;
       })}
+      <Button title="Press Me" onPress={props.handlePress} />
     </View>
   );
 }

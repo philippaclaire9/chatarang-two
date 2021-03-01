@@ -10,36 +10,29 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 export default function App() {
   const [value, onChangeText] = useState('placeholder');
   const [list, setList] = useState([]);
-  const [items, setItems] = useState();
+  
 
-  const itemsRef = firebaseApp.database().ref();
+  useEffect(() => {
+      const itemsRef = firebaseApp.database().ref('shopping');
+      itemsRef.on('value', (snapshot) => {
+        const data = snapshot.val()
+        console.log('data: ', data)
+        setList(Object.values(data))
+      })
 
-  // const listenForItems = (itemsRef) => {
-  //   itemsRef.on('value', (snap) => {
-  //     console.log(snap);
-  //     const itemsArray = [];
-  //     snap.forEach((child) => {
-  //       itemsArray.push({
-  //         title: child.val().title,
-  //         key: child.key,
-  //       });
-  //     });
-
-  //     setItems(itemsArray);
-  //   });
-  // };
-
-  // const writeWords = (value) => {
-
-  //};
+      return () => {
+        itemsRef.off();
+      }
+  }, [])
 
   const handlePress = () => {
     console.log('hello');
     setList((prevState) => [value, ...prevState]);
-    firebaseApp
+    const newListRef = firebaseApp
       .database()
-      .ref(`shopping/${list.length + 1}`)
-      .set(`${value}`);
+      .ref(`shopping`)
+    const newPostRef = newListRef.push()
+    newPostRef.set(value)
   };
 
   const handleTextChange = (newWord) => {
@@ -48,7 +41,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Test test test</Text>
+      <Text>Chatarang</Text>
+      <List words={list} handlePress={handlePress} />
       <TextInput
         style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
         onChangeText={handleTextChange}
@@ -56,7 +50,6 @@ export default function App() {
       />
       <Text>The current word: {value}</Text>
 
-      <List words={list} handlePress={handlePress} />
     </View>
   );
 }
