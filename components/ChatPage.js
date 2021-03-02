@@ -6,9 +6,8 @@ import firebase from 'firebase';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 const ChatPage = () => {
-  const [value, onChangeText] = useState('placeholder');
-  // const [dbRef, setDbRef] = useState(null);
-  const [chats, setChats] = useState([]);
+  const [value, onChangeText] = useState('');
+  // const [chats, setChats] = useState([]);
   // [{uid: "", sent_at: 123, message: ""}]
   const Firebase = useContext(FirebaseContext);
 
@@ -18,25 +17,14 @@ const ChatPage = () => {
     idField: 'uid',
   });
 
-  // useEffect(() => {
-  //   const dbRef = Firebase.getDbRef();
-  //   setDbRef(dbRef);
-  //   dbRef.collection('chats').onSnapshot((querySnapshot) => {
-  //     querySnapshot.forEach((chat) => {
-  //       console.log(chat.data());
-  //       setChats((currentChats) => [chat.data(), ...currentChats]);
-  //     });
-  //   });
-  // }, []);
-
   const handlePress = () => {
     const chatObj = {
       message: value,
       sent_at: firebase.firestore.FieldValue.serverTimestamp(),
       uid: 'philippa&doug',
     };
-    setChats((prevState) => [chatObj, ...prevState]);
-    dbRef.collection('chats').add(chatObj);
+    // setChats((prevState) => [chatObj, ...prevState]);
+    dbRef.doc().set(chatObj);
   };
 
   const handleTextChange = (newWord) => {
@@ -45,14 +33,15 @@ const ChatPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Chatarang</Text>
-      <List words={messages} handlePress={handlePress} />
-      <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-        onChangeText={handleTextChange}
-        value={value}
-      />
-      <Text>The current word: {value}</Text>
+      <List words={messages} />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.textInput}
+          onChangeText={handleTextChange}
+          value={value}
+        />
+        <Button style={styles.sendButton} title="Send" onPress={handlePress} />
+      </View>
     </View>
   );
 };
@@ -60,9 +49,24 @@ const ChatPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+  },
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 7,
+    borderTopLeftRadius: 7,
+  },
+  sendButton: {
+    borderTopRightRadius: 7,
+    borderBottomRightRadius: 7,
+    overflow: 'hidden',
   },
 });
 
