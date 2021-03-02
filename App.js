@@ -21,9 +21,9 @@ const styles = StyleSheet.create({
 
 const Stack = createStackNavigator();
 
-const ChatScreen = () => (
+const ChatScreen = (props) => (
   <View style={styles.app}>
-    <ChatPage />
+    <ChatPage {...props} />
   </View>
 );
 
@@ -31,20 +31,23 @@ const authRef = Firebase.getAuth();
 
 export default function App() {
   const [user] = useAuthState(authRef);
-
+  const [
+    createUser,
+    emailUser,
+    loading,
+    error,
+  ] = useCreateUserWithEmailAndPassword(authRef);
   const emailSignUp = (email, password) => {
     console.log('getting ready to create user...');
     console.log(useCreateUserWithEmailAndPassword);
-    const [
-      createUser,
-      user,
-      loading,
-      error,
-    ] = useCreateUserWithEmailAndPassword(authRef);
+
     console.log('creating user...');
     createUser(email, password);
-    console.log(user);
   };
+
+  if (emailUser) {
+    emailUser.user.updateProfile({ displayName: 'Dough' });
+  }
 
   const emailSignIn = (email, password) => {
     // const provider = Firebase.getAuthProvider();
@@ -60,7 +63,7 @@ export default function App() {
     <FirebaseProvider value={Firebase}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: true }}>
-          {!user ? (
+          {!emailUser ? (
             <Stack.Screen name="Home">
               {(props) => (
                 <HomeScreen
@@ -73,14 +76,17 @@ export default function App() {
           ) : (
             <Stack.Screen
               name="Chat"
-              component={ChatScreen}
               options={{
                 title: 'chaterang',
                 headerRight: () => {
                   return <Button title="Sign out" onPress={emailSignOut} />;
                 },
               }}
-            />
+            >
+              {(props) => {
+                return <ChatScreen {...props} currentUser={emailUser} />;
+              }}
+            </Stack.Screen>
           )}
         </Stack.Navigator>
       </NavigationContainer>

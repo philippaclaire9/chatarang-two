@@ -5,7 +5,7 @@ import List from './List';
 import firebase from 'firebase';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
-const ChatPage = () => {
+const ChatPage = (props) => {
   const [value, onChangeText] = useState('');
   // const [chats, setChats] = useState([]);
   // [{uid: "", sent_at: 123, message: ""}]
@@ -16,12 +16,14 @@ const ChatPage = () => {
   const [messages, loading, error] = useCollectionData(query, {
     idField: 'uid',
   });
+  console.log(props.currentUser);
 
   const handlePress = () => {
     const chatObj = {
       message: value,
       sent_at: firebase.firestore.FieldValue.serverTimestamp(),
-      uid: 'philippa&doug',
+      displayName: props.currentUser.user.displayName,
+      uid: props.currentUser.user.uid,
     };
     // setChats((prevState) => [chatObj, ...prevState]);
     dbRef.doc().set(chatObj);

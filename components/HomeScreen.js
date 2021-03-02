@@ -46,12 +46,12 @@ const HomeScreen = ({ navigation, signIn, signUp }) => {
         <Text style={{ alignSelf: 'center' }}>Welcome to our app :) 👯‍♀️</Text>
         <View style={styles.form}>
           <Text>Email:</Text>
-          <TextInput style={styles.textInput} onTextInput={setEmailInput} />
+          <TextInput style={styles.textInput} onChangeText={setEmailInput} />
           <Text>Password:</Text>
           <TextInput
             secureTextEntry={true}
             style={styles.textInput}
-            onTextInput={setPasswordInput}
+            onChangeText={setPasswordInput}
           />
         </View>
         <View>

@@ -37,6 +37,8 @@ export default function List({ words, handlePress }) {
             <View style={styles.chatBubble}>
               <Text key={i} style={styles.chatText}>
                 {item.message}
+                <br />
+                {item.displayName}
               </Text>
             </View>
           );
