@@ -31,11 +31,12 @@ const authRef = Firebase.getAuth();
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [displayNameInput, setDisplayNameInput] = useState('');
   // needed??
   // const [user] = useAuthState(authRef);
   useEffect(() => {
     authRef.onAuthStateChanged((user) => {
-      console.log(user);
+      //console.log(user);
       setUser(user);
     });
   }, []);
@@ -75,7 +76,7 @@ export default function App() {
   };
 
   if (newUser) {
-    newUser.user.updateProfile({ displayName: 'Dough' });
+    newUser.user.updateProfile({ displayName: displayNameInput });
   }
   return (
     <FirebaseProvider value={Firebase}>
@@ -90,6 +91,7 @@ export default function App() {
                   signUp={emailSignUp}
                   signUpError={signUpError}
                   signInError={signInError}
+                  setDisplayName={setDisplayNameInput}
                 />
               )}
             </Stack.Screen>

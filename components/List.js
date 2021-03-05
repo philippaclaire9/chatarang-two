@@ -11,6 +11,8 @@ const styles = StyleSheet.create({
     borderColor: '#c6cdd7',
     borderWidth: 1,
     borderRadius: 7,
+    height: 80,
+    //backgroundColor: ""
     margin: '.2rem',
     overflow: 'hidden',
     shadowColor: '#4a6d88',

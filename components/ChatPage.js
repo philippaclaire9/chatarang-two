@@ -16,16 +16,16 @@ const ChatPage = (props) => {
     idField: 'uid',
   });
 
-  console.log(props.currentUser);
-
   const handlePress = () => {
+    console.log(props.currentUser.displayName);
     const chatObj = {
       message: value,
       sent_at: firebase.firestore.FieldValue.serverTimestamp(),
-      displayName: props.currentUser.user.displayName,
-      uid: props.currentUser.user.uid,
+      displayName: props.currentUser.displayName,
+      uid: props.currentUser.uid,
     };
     dbRef.doc().set(chatObj);
+    onChangeText('');
   };
 
   const handleTextChange = (newWord) => {

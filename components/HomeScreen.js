@@ -28,10 +28,11 @@ const HomeScreen = ({
   signUp,
   signInError,
   signUpError,
+  setDisplayName,
 }) => {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
-  const [displayNameInput, setDisplayNameInput] = useState('');
+  const [hasAccount, setAccountStatus] = useState(true);
 
   const handleSignUp = () => {
     if (emailInput && passwordInput) {
@@ -48,25 +49,43 @@ const HomeScreen = ({
     <View style={styles.app}>
       <View style={styles.signInWrapper}>
         <Text style={{ alignSelf: 'center' }}>Welcome to our app :) 👯‍♀️</Text>
-        <View style={styles.form}>
-          <Text>Email:</Text>
-          <TextInput style={styles.textInput} onChangeText={setEmailInput} />
-          <Text>Password:</Text>
-          <TextInput
-            secureTextEntry={true}
-            style={styles.textInput}
-            onChangeText={setPasswordInput}
-          />
-          <Text>Display name:</Text>
-          <TextInput
-            style={styles.textInput}
-            onChangeText={setDisplayNameInput}
-          />
-        </View>
-        <View>
-          <Button title="Sign in" onPress={handleSignIn} />
-          <Button title="Sign up" onPress={handleSignUp} />
-        </View>
+        {hasAccount ? (
+          <View style={styles.form}>
+            <Text>Email:</Text>
+            <TextInput style={styles.textInput} onChangeText={setEmailInput} />
+            <Text>Password:</Text>
+            <TextInput
+              secureTextEntry={true}
+              style={styles.textInput}
+              onChangeText={setPasswordInput}
+            />
+            <Button title="Sign in" onPress={handleSignIn} />
+            <Text>Don't have an account? Sign up below</Text>
+            <Button
+              title="Create account"
+              onPress={() => {
+                setAccountStatus(false);
+              }}
+            />
+          </View>
+        ) : (
+          <View style={styles.form}>
+            <Text>Email:</Text>
+            <TextInput style={styles.textInput} onChangeText={setEmailInput} />
+            <Text>Password:</Text>
+            <TextInput
+              secureTextEntry={true}
+              style={styles.textInput}
+              onChangeText={setPasswordInput}
+            />
+
+            <Text>Display name:</Text>
+            <TextInput style={styles.textInput} onChangeText={setDisplayName} />
+            <Button title="Sign up" onPress={handleSignUp} />
+          </View>
+        )}
+
+        <View></View>
         <Text style={{ color: 'red' }}>
           {signInError && signInError.message}
         </Text>
