@@ -7,8 +7,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 
 const ChatPage = (props) => {
   const [value, onChangeText] = useState('');
-  // const [chats, setChats] = useState([]);
-  // [{uid: "", sent_at: 123, message: ""}]
+  // [{displayName: "", uid: "", sent_at: 123, message: ""}]
   const Firebase = useContext(FirebaseContext);
 
   const dbRef = Firebase.getDbRef().collection('chats');
@@ -16,6 +15,7 @@ const ChatPage = (props) => {
   const [messages, loading, error] = useCollectionData(query, {
     idField: 'uid',
   });
+
   console.log(props.currentUser);
 
   const handlePress = () => {
@@ -25,7 +25,6 @@ const ChatPage = (props) => {
       displayName: props.currentUser.user.displayName,
       uid: props.currentUser.user.uid,
     };
-    // setChats((prevState) => [chatObj, ...prevState]);
     dbRef.doc().set(chatObj);
   };
 

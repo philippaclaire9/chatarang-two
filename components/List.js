@@ -34,8 +34,8 @@ export default function List({ words, handlePress }) {
       {words &&
         words.map((item, i) => {
           return (
-            <View style={styles.chatBubble}>
-              <Text key={i} style={styles.chatText}>
+            <View key={i} style={styles.chatBubble}>
+              <Text style={styles.chatText}>
                 {item.message}
                 <br />
                 {item.displayName}

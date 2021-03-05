@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import ChatPage from './components/ChatPage';
 import { FirebaseProvider } from './firebase/firebase-context';
@@ -30,46 +30,66 @@ const ChatScreen = (props) => (
 const authRef = Firebase.getAuth();
 
 export default function App() {
-  const [user] = useAuthState(authRef);
+  const [user, setUser] = useState(null);
+  // needed??
+  // const [user] = useAuthState(authRef);
+  useEffect(() => {
+    authRef.onAuthStateChanged((user) => {
+      console.log(user);
+      setUser(user);
+    });
+  }, []);
+  ////////////
+  // sign up
+  //
   const [
     createUser,
-    emailUser,
-    loading,
-    error,
+    newUser,
+    signUpLoading,
+    signUpError,
   ] = useCreateUserWithEmailAndPassword(authRef);
   const emailSignUp = (email, password) => {
-    console.log('getting ready to create user...');
-    console.log(useCreateUserWithEmailAndPassword);
-
-    console.log('creating user...');
     createUser(email, password);
   };
 
-  if (emailUser) {
-    emailUser.user.updateProfile({ displayName: 'Dough' });
-  }
+  //////////
+  // sign in
+  //
+  const [
+    signInUser,
+    existingUser,
+    signInLoading,
+    signInError,
+  ] = useSignInWithEmailAndPassword(authRef);
 
   const emailSignIn = (email, password) => {
-    // const provider = Firebase.getAuthProvider();
-    // console.log(provider);
-    // authRef.signInWithPopup(provider);
+    signInUser(email, password);
   };
+
+  ////////
+  // sign out
+  //
 
   const emailSignOut = () => {
     authRef.signOut();
   };
 
+  if (newUser) {
+    newUser.user.updateProfile({ displayName: 'Dough' });
+  }
   return (
     <FirebaseProvider value={Firebase}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: true }}>
-          {!emailUser ? (
+          {!user ? (
             <Stack.Screen name="Home">
               {(props) => (
                 <HomeScreen
                   {...props}
                   signIn={emailSignIn}
                   signUp={emailSignUp}
+                  signUpError={signUpError}
+                  signInError={signInError}
                 />
               )}
             </Stack.Screen>
@@ -84,7 +104,7 @@ export default function App() {
               }}
             >
               {(props) => {
-                return <ChatScreen {...props} currentUser={emailUser} />;
+                return <ChatScreen {...props} currentUser={user} />;
               }}
             </Stack.Screen>
           )}

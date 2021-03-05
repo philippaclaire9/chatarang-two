@@ -22,16 +22,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const HomeScreen = ({ navigation, signIn, signUp }) => {
+const HomeScreen = ({
+  navigation,
+  signIn,
+  signUp,
+  signInError,
+  signUpError,
+}) => {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
+  const [displayNameInput, setDisplayNameInput] = useState('');
 
   const handleSignUp = () => {
-    console.log('signing up...');
-    console.log(emailInput, passwordInput);
-    // if (emailInput && passwordInput) {
-    signUp(emailInput, passwordInput);
-    // }
+    if (emailInput && passwordInput) {
+      signUp(emailInput, passwordInput);
+    }
   };
 
   const handleSignIn = () => {
@@ -39,7 +44,6 @@ const HomeScreen = ({ navigation, signIn, signUp }) => {
       signIn(emailInput, passwordInput);
     }
   };
-
   return (
     <View style={styles.app}>
       <View style={styles.signInWrapper}>
@@ -53,11 +57,19 @@ const HomeScreen = ({ navigation, signIn, signUp }) => {
             style={styles.textInput}
             onChangeText={setPasswordInput}
           />
+          <Text>Display name:</Text>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={setDisplayNameInput}
+          />
         </View>
         <View>
           <Button title="Sign in" onPress={handleSignIn} />
           <Button title="Sign up" onPress={handleSignUp} />
         </View>
+        <Text style={{ color: 'red' }}>
+          {signInError && signInError.message}
+        </Text>
       </View>
     </View>
   );
